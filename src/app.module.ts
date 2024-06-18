@@ -12,7 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env['MONGODB_URI'], {
-      connectionName: 'share-your-favorite-places',
+      connectionName: process.env['DATABASE_NAME'],
     }),
     UsersModule,
   ],
