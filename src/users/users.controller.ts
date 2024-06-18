@@ -12,7 +12,7 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'List of users fetched successfully',
-  }) // 응답(Response) 설명 추가
+  })
   async getUsersList() {
     return this.usersService.getUserList();
   }
