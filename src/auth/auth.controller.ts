@@ -1,4 +1,10 @@
-import { Post, Body, Controller } from '@nestjs/common';
+import {
+  Post,
+  Body,
+  Controller,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -8,8 +14,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
-import { UserRegisterDto } from 'src/users/dto/users.dto';
-import { UserRegisterBody } from 'src/users/schema/users.schema';
+import { UserRegisterDto, UserRegisterBody } from 'src/users/dto/users.dto';
 import * as bcrypt from 'bcrypt';
 
 @ApiTags('인증: auth') // 태그 추가
@@ -31,6 +36,7 @@ export class AuthController {
     description: 'List of users fetched successfully',
     type: PickType(UserRegisterBody, ['name', 'nickname', 'email']),
   })
+  @UsePipes(new ValidationPipe({ transform: true }))
   async createUser(@Body() user: UserRegisterDto) {
     const hash = await bcrypt.hash(
       user.password,
@@ -40,6 +46,7 @@ export class AuthController {
     const newUser = await this.usersService.createUser({
       ...user,
       password: hash,
+      // profile_image: user.profile_image ? user.profile_image : '',
     });
 
     return {
