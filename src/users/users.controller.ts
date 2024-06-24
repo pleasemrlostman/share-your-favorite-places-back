@@ -1,8 +1,6 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { UserRegisterDto } from './dto/users.dto';
-import { UserRegisterBody } from './schema/users.schema';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('유저: Users') // 태그 추가
 @Controller('user')
@@ -17,20 +15,5 @@ export class UsersController {
   })
   async getUsersList() {
     return this.usersService.getUserList();
-  }
-
-  @Post('register')
-  @ApiOperation({ summary: '유저 등록하기' })
-  @ApiBody({
-    description: 'The user registration payload',
-    type: UserRegisterBody,
-  })
-  async createUser(@Body() userDto: UserRegisterDto) {
-    return this.usersService.createUser({
-      name: userDto.name,
-      password: userDto.password,
-      email: userDto.email,
-      nickname: userDto.nickname,
-    });
   }
 }
