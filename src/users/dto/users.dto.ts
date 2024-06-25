@@ -47,3 +47,8 @@ export class UserRegisterBody extends PickType(UserRegisterDto, [
   // 'profile_image',
   // 'role',
 ] as const) {}
+
+export class UserLoginBody extends PickType(UserRegisterDto, [
+  'email',
+  'password',
+] as const) {}
