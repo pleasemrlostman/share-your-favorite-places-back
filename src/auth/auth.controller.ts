@@ -13,6 +13,7 @@ import {
   ApiBody,
   PickType,
 } from '@nestjs/swagger';
+import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import {
@@ -21,13 +22,16 @@ import {
   UserLoginBody,
 } from 'src/users/dto/users.dto';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('인증: auth') // 태그 추가
 @Controller('auth')
 export class AuthController {
   constructor(
+    private readonly jwtService: JwtService,
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post('register')
@@ -81,6 +85,33 @@ export class AuthController {
         '비밀번호 또는 아이디가 틀립니다. 다시 시도해주세요.',
       );
     }
+
+    const accessToken = this.jwtService.sign(
+      {
+        email: loginUser.email,
+        type: 'access',
+      },
+      {
+        secret: this.configService.get<string>('ENV_JWT_SECRET'),
+        expiresIn: 300,
+      },
+    );
+
+    const refreshToken = this.jwtService.sign(
+      {
+        email: loginUser.email,
+        type: 'refresh',
+      },
+      {
+        secret: this.configService.get<string>('ENV_JWT_SECRET'),
+        expiresIn: 3600,
+      },
+    );
+
+    return {
+      accessToken,
+      refreshToken,
+    };
     // 2. 해당 email에 있는 비밀번호 해쉬값과 일치하면
     // 3. 로그인 성공
     // 3-1. 로그인 실패
