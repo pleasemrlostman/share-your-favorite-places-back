@@ -109,6 +109,7 @@ export class AuthController {
     );
 
     return {
+      hasUser,
       accessToken,
       refreshToken,
     };
